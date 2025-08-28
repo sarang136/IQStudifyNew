@@ -102,7 +102,7 @@
 //         ))}
 //       </div>
 
-     
+
 //       <div className="flex">
 //         {/* 🔹 Categories Sidebar */}
 //         <div className="p-4 bg-[#072B78] max-h-[70vh] w-[20vw] overflow-y-scroll">
@@ -169,7 +169,7 @@
 //                       onClick={() => router.push(`/admin/dashboard/testsection/${sub._id}`)} 
 //                     >
 //                       {sub.name}
-                     
+
 //                     </motion.div>
 //                   ))
 //                 ) : (
@@ -211,7 +211,7 @@ const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchTitles = async () => {
+    const fetchTitlesAndCategories = async () => {
       try {
         const titleRes = await axios.get("/api/admin/getalltitlecategory");
         const titleList = titleRes.data || [];
@@ -220,7 +220,30 @@ const Page = () => {
         if (titleList.length > 0) {
           const firstTitleId = titleList[0]._id;
           setActiveTitle(firstTitleId);
-          await fetchCategories(firstTitleId, true);
+
+          // Move fetchCategories logic here
+          try {
+            const res = await axios.get(`/api/admin/getallcategory?titleCategory=${firstTitleId}`);
+            const categoryList = res.data.categories || res.data.data || [];
+            setCategories(categoryList);
+
+            if (categoryList.length > 0) {
+              const firstCategory = categoryList[0];
+              setActiveCategory(firstCategory._id);
+
+              // Fetch subcategories
+              try {
+                const subRes = await axios.get(`/api/admin/getallsubcategory?id=${firstCategory._id}`);
+                setSubcategories(subRes.data.subcategories || []);
+              } catch (err) {
+                console.error("Error fetching subcategories:", err);
+                setSubcategories([]);
+              }
+            }
+          } catch (err) {
+            console.error("Error fetching categories:", err);
+            setCategories([]);
+          }
         }
       } catch (error) {
         console.error("Error fetching title categories:", error);
@@ -229,8 +252,9 @@ const Page = () => {
       }
     };
 
-    fetchTitles();
+    fetchTitlesAndCategories();
   }, []);
+
 
   const fetchCategories = async (titleId, autoSelectFirst = false) => {
     try {
@@ -288,11 +312,10 @@ const Page = () => {
               setActiveCategory(null);
               fetchCategories(title._id, true);
             }}
-            className={`cursor-pointer p-2 text-sm whitespace-nowrap ${
-              activeTitle === title._id
+            className={`cursor-pointer p-2 text-sm whitespace-nowrap ${activeTitle === title._id
                 ? "text-black border-b-2 border-b-blue-500 font-medium"
                 : "text-gray-600 hover:text-black"
-            }`}
+              }`}
           >
             {title.title}
           </div>
@@ -320,11 +343,10 @@ const Page = () => {
                       setActiveCategory(cat._id);
                       fetchSubcategories(cat._id);
                     }}
-                    className={`cursor-pointer px-3 py-2 rounded mb-2 text-white transition-[0.5s] ${
-                      activeCategory === cat._id
+                    className={`cursor-pointer px-3 py-2 rounded mb-2 text-white transition-[0.5s] ${activeCategory === cat._id
                         ? "bg-[#EF9C01] text-white"
                         : "hover:bg-[#EF9C01]"
-                    }`}
+                      }`}
                   >
                     {cat.name}
                   </div>

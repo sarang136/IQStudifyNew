@@ -78,7 +78,7 @@ const DashboardStats = () => {
             <span className="text-xl font-semibold">
               <CountUp end={isLoading ? 0 : approved} duration={1.5} />
             </span>
-            <span className="text-gray-500 text-sm">Approved MCQ's</span>
+            <span className="text-gray-500 text-sm">Approved MCQs</span>
           </div>
         </div>
 
@@ -91,7 +91,7 @@ const DashboardStats = () => {
             <span className="text-xl font-semibold">
               <CountUp end={isLoading ? 0 : pending} duration={1.5} />
             </span>
-            <span className="text-gray-500 text-sm">Pending MCQ's</span>
+            <span className="text-gray-500 text-sm">Pending MCQs</span>
           </div>
         </div>
 
@@ -104,7 +104,7 @@ const DashboardStats = () => {
             <span className="text-xl font-semibold">
               <CountUp end={isLoading ? 0 : draft} duration={1.5} />
             </span>
-            <span className="text-gray-500 text-sm">Draft MCQ's</span>
+            <span className="text-gray-500 text-sm">Draft MCQs</span>
           </div>
         </div>
       </div>
